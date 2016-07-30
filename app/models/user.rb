@@ -12,6 +12,9 @@ class User < ApplicationRecord
   private
 
   def update_access_token!
+    # very silly to use the db ID in the token in practice, but works fine
+    # and is simpler to deal with in the beginning stages of development
+    
     self.access_token = "#{self.id}:#{Devise.friendly_token}"
     save
   end
