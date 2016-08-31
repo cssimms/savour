@@ -20,11 +20,11 @@ class ApplicationController < ActionController::API
   def check_token_login(token)
     auth_error unless token.include?(':')
 
-    user_id = token.split(':')
-    user = User.find_by_id(token.first)
+    user_id = token.split(':').first
+    user = User.find_by_id(user_id)
 
     if user && Devise.secure_compare(token, user.access_token)
-      sign_in user, store:false
+      sign_in user, store: false
     else
       auth_error
     end
@@ -32,6 +32,10 @@ class ApplicationController < ActionController::API
 
   def auth_error
     # invalid or nonexsistant token in request header
-    render :json {error:'unauthorized'}, status: 401
+    # could respond with 401 and errors...
+    # render :json, error: 'Unauthorized', status: 401
+
+    # but maybe better to just redirect to splash page
+    render json: { loggedIn: false } , status: 401
   end
 end
